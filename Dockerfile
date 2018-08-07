@@ -101,7 +101,7 @@ RUN cp -rf include ./target
 RUN find target -name "libv8_for_testing.cr.so" -delete
 
 # stl lib from android-ndk have no symbols, so why bother copy them?
-RUN find target/symbols -name "libc++shared.so" -delete"
+RUN find target/symbols -name "libc++shared.so" -delete
 
 RUN zip -r v8.zip target
 RUN ls -al /home/docker/v8/v8.zip
