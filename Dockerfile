@@ -95,7 +95,8 @@ RUN cp -rf out.gn/ia32.release/*.so ./target/x86
 RUN cp -rf out.gn/ia32.release/lib.unstripped/*.so ./target/symbols/x86
 
 # Creating release archive
-RUN cp -rf include ./target
+RUN mkdir ./target/headers
+RUN cp -rf include ./target/headers
 
 # We don't need testing lib in resulting package 
 RUN find target -name "libv8_for_testing.cr.so" -delete
@@ -103,7 +104,13 @@ RUN find target -name "libv8_for_testing.cr.so" -delete
 # stl lib from android-ndk have no symbols, so why bother copy them?
 RUN find target/symbols -name "libc++_shared.so" -delete
 
-RUN zip -r v8.zip target
+# some V8 versions copy stl to release folder, some not. We need exact version of stl V8 built with to be on the safe side.
+RUN cp ./third_party/android_ndk/sources/cxx-stl/llvm-libc++/libs/arm64-v8a/libc++_shared.so ./target/arm64-v8a/
+RUN cp ./third_party/android_ndk/sources/cxx-stl/llvm-libc++/libs/armeabi-v7a/libc++_shared.so ./target/armeabi-v7a
+RUN cp ./third_party/android_ndk/sources/cxx-stl/llvm-libc++/libs/x86/libc++_shared.so ./target/x86/
+
+WORKDIR /home/docker/v8/target/
+RUN zip -r ../v8.zip ./*
 RUN ls -al /home/docker/v8/v8.zip
 #End of docker Command
 
