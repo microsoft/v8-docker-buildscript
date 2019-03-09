@@ -77,6 +77,23 @@ RUN mkdir -p target/armeabi-v7a target/symbols/armeabi-v7a
 RUN cp -rf out.gn/arm.release/*.so ./target/armeabi-v7a
 RUN cp -rf out.gn/arm.release/lib.unstripped/*.so ./target/symbols/armeabi-v7a
 
+# X86_64
+RUN python ./tools/dev/v8gen.py x64.release -vv
+RUN rm out.gn/x64.release/args.gn
+COPY ./args_x86_64.gn out.gn/x64.release/args.gn
+RUN ls -al out.gn/x64.release/
+RUN cat out.gn/x64.release/args.gn
+RUN sudo chmod 777 out.gn/x64.release/args.gn
+RUN touch out.gn/x64.release/args.gn
+# Build the V8 liblary
+RUN ninja -C out.gn/x64.release -t clean 
+RUN ninja -C out.gn/x64.release
+# Prepare files for archiving
+RUN rm -rf target/x86_64
+RUN mkdir -p target/x86_64 target/symbols/x86_64
+RUN cp -rf out.gn/x64.release/*.so ./target/x86_64
+RUN cp -rf out.gn/x64.release/lib.unstripped/*.so ./target/symbols/x86_64
+
 # X86
 RUN python ./tools/dev/v8gen.py ia32.release -vv
 RUN rm out.gn/ia32.release/args.gn
@@ -108,6 +125,7 @@ RUN find target/symbols -name "libc++_shared.so" -delete
 RUN cp ./third_party/android_ndk/sources/cxx-stl/llvm-libc++/libs/arm64-v8a/libc++_shared.so ./target/arm64-v8a/
 RUN cp ./third_party/android_ndk/sources/cxx-stl/llvm-libc++/libs/armeabi-v7a/libc++_shared.so ./target/armeabi-v7a
 RUN cp ./third_party/android_ndk/sources/cxx-stl/llvm-libc++/libs/x86/libc++_shared.so ./target/x86/
+RUN cp ./third_party/android_ndk/sources/cxx-stl/llvm-libc++/libs/x86_64/libc++_shared.so ./target/x86_64/
 
 WORKDIR /home/docker/v8/target/
 RUN zip -r ../v8.zip ./*
