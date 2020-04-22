@@ -40,7 +40,7 @@ RUN echo y | sudo /home/docker/v8/build/install-build-deps-android.sh
 WORKDIR /home/docker/v8
 ARG CACHEBUST=1
 # checkout required V8 Branch
-RUN git checkout 6.8.190
+RUN git checkout 8.1.307.28
 RUN gclient sync
 #ARG CACHEBUST=1
 
